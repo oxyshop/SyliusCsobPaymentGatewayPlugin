@@ -3,13 +3,19 @@
         <img src="https://avatars0.githubusercontent.com/u/38423357?s=200&v=4"/>
     </a>
 </p>
-<h1 align="center">CSOB payment plugin</h1>
+<h1 align="center">ČSOB Payment Gateway Plugin</h1>
 
 ## Features
 
-xxxx
+* Card payments as supported by ČSOB
+  * Czechia: https://platebnibrana.csob.cz
+  * Slovakia: https://www.csob.sk/podnikatelia-firmy/platby-pre-eshopy
+* Fully integrated as Sylius payment method
+* Using more different gateways at once or per channel
 
-* xxxxx
+<p align="center">
+	<img src="https://raw.githubusercontent.com/mangoweb-sylius/SyliusCsobPaymentGatewayPlugin/master/doc/admin.png"/>
+</p>
 
 ## Installation
 
@@ -18,9 +24,11 @@ xxxx
 
 ## Usage
 
-* <b>Create CSOB payment type</b><br>in administration<br>
-* <b>Insert client SANDBOX key</b><br>insert key file to `/config/csobKeys/clientKeys/sandbox/{Key file name}`"
-* <b>Insert client PRODUCTION key</b><br>insert key file to `/config/csobKeys/clientKeys/prod/{Key file name}`"
+* <b>Create CSOB payment type</b><br>in Sylius admin panel<br>
+* <b>Insert client SANDBOX key</b><br>put the key into the file `/config/csobKeys/clientKeys/sandbox/{Key file name}`
+* <b>Insert client PRODUCTION key</b><br>put the key into the file `/config/csobKeys/clientKeys/prod/{Key file name}`
+
+Name of the file with the key is not important, just keep it the same for sandbox and production and remember to put the same filename (without its path) into the "Key file name" field. Recpect lowercas and uppercase characters.
 
 ## Development
 
