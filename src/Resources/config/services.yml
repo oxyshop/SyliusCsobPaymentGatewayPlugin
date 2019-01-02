@@ -1,0 +1,36 @@
+services:
+    _defaults:
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    MangoSylius\CsobPaymentGatewayPlugin\Api\CsobApi:
+        arguments:
+            $kernel: '@kernel'
+            $translator: '@translator'
+            $shopperContext: '@sylius.context.shopper'
+
+    mango_sylius:csob-payment-gateway-plugin:csob_gateway_factory:
+        public: true
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments:
+            $gatewayFactoryClass: MangoSylius\CsobPaymentGatewayPlugin\CsobGatewayFactory
+        tags:
+            - name: payum.gateway_factory_builder
+              factory: csob
+
+    MangoSylius\CsobPaymentGatewayPlugin\Form\Type\CsobGatewayConfigurationType:
+        tags:
+            - name: sylius.gateway_configuration_type
+              type: csob
+              label: mango-sylius.csob_plugin.csob
+            - name: form.type
+
+    MangoSylius\CsobPaymentGatewayPlugin\Action\CsobAction:
+        public: true
+        arguments:
+            $csobApi: '@MangoSylius\CsobPaymentGatewayPlugin\Api\CsobApi'
+        tags:
+            - name: payum.action
+              factory: csob
+              alias: payum.action.set_csob
