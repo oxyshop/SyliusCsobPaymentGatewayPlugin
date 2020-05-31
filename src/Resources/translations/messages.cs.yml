@@ -1,9 +1,8 @@
 mango-sylius:
-
     csob_plugin:
         csob: CSOB
         itemText: Platba za nákup
         form:
             merchantId: ID obchodníka
             sandbox: Testovací prostředí
-            keyName: Název souboru klíče
+            privateKey: Soukromý klíč

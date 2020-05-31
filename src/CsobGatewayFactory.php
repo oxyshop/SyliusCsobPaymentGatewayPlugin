@@ -13,9 +13,9 @@ use Payum\Core\GatewayFactory;
 class CsobGatewayFactory extends GatewayFactory
 {
 	/**
-	 * {@inheritdoc}
+	 * @param ArrayObject<mixed> $config
 	 */
-	protected function populateConfig(ArrayObject $config)
+	protected function populateConfig(ArrayObject $config): void
 	{
 		$config->defaults([
 			'payum.factory_name' => 'csob',
@@ -29,11 +29,11 @@ class CsobGatewayFactory extends GatewayFactory
 		if (!$config['payum.api']) {
 			$config['payum.default_options'] = [
 				'sandbox' => true,
-				'keyName' => '',
+				'keyPrivate' => '',
 				'merchantId' => '',
 			];
 			$config->defaults($config['payum.default_options']);
-			$config['payum.required_options'] = ['merchantId', 'keyName'];
+			$config['payum.required_options'] = ['merchantId', 'keyPrivate'];
 
 			$config['payum.api'] = function (ArrayObject $config) {
 				$config->validateNotEmpty($config['payum.required_options']);
@@ -41,7 +41,7 @@ class CsobGatewayFactory extends GatewayFactory
 				$csobConfig = [
 					'sandbox' => $config['sandbox'],
 					'merchantId' => $config['merchantId'],
-					'keyName' => $config['keyName'],
+					'keyPrivate' => $config['keyPrivate'],
 				];
 
 				return $csobConfig;

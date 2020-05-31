@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MangoSylius\CsobPaymentGatewayPlugin\Api;
 
+use MangoSylius\CsobPaymentGatewayPlugin\Service\CryptoService;
 use SlevomatCsobGateway\Api\ApiClient;
 use SlevomatCsobGateway\Api\Driver\CurlDriver;
 use SlevomatCsobGateway\Api\HttpMethod;
@@ -11,12 +12,10 @@ use SlevomatCsobGateway\Call\PaymentStatus;
 use SlevomatCsobGateway\Call\PayMethod;
 use SlevomatCsobGateway\Call\PayOperation;
 use SlevomatCsobGateway\Cart;
-use SlevomatCsobGateway\Crypto\CryptoService;
 use SlevomatCsobGateway\Currency;
 use SlevomatCsobGateway\Language;
 use SlevomatCsobGateway\RequestFactory;
 use Sylius\Component\Core\Context\ShopperContextInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CsobApi implements CsobApiInterface
@@ -27,27 +26,16 @@ class CsobApi implements CsobApiInterface
 	/** @var TranslatorInterface */
 	protected $translator;
 
-	/** @var KernelInterface */
-	protected $kernel;
-
 	public function __construct(
-		KernelInterface $kernel,
 		TranslatorInterface $translator,
 		ShopperContextInterface $shopperContext
 	) {
-		$this->kernel = $kernel;
 		$this->translator = $translator;
 		$this->shopperContext = $shopperContext;
 	}
 
-	private function createApi(bool $sandbox, string $keyName): ApiClient
+	private function createApi(bool $sandbox, string $keyPrivate): ApiClient
 	{
-		$kernelDir = $this->kernel->getRootDir();
-
-		$clientCert = $sandbox
-			? $kernelDir . '/../config/csobKeys/clientKeys/sandbox/' . $keyName
-			: $kernelDir . '/../config/csobKeys/clientKeys/prod/' . $keyName;
-
 		$serverCert = $sandbox
 			? __DIR__ . '/../Resources/keys/serverKeys/sandbox/mips_platebnibrana.csob.cz.pub'
 			: __DIR__ . '/../Resources/keys/serverKeys/prod/mips_platebnibrana.csob.cz.pub';
@@ -58,14 +46,14 @@ class CsobApi implements CsobApiInterface
 
 		return new ApiClient(
 			new CurlDriver(),
-			new CryptoService($clientCert, $serverCert),
+			new CryptoService($keyPrivate, $serverCert),
 			$apiEndpoint
 		);
 	}
 
-	public function create(array $order, string $merchantId, bool $sandbox, string $keyName): array
+	public function create(array $order, string $merchantId, bool $sandbox, string $keyPrivate): array
 	{
-		$apiClient = $this->createAPI($sandbox, $keyName);
+		$apiClient = $this->createAPI($sandbox, $keyPrivate);
 		$requestFactory = new RequestFactory($merchantId);
 
 		$cart = new Cart(Currency::get($order['currency']));
@@ -107,9 +95,9 @@ class CsobApi implements CsobApiInterface
 		];
 	}
 
-	public function retrieve(string $merchantId, bool $sandbox, string $keyName): string
+	public function retrieve(string $merchantId, bool $sandbox, string $keyPrivate): string
 	{
-		$apiClient = $this->createAPI($sandbox, $keyName);
+		$apiClient = $this->createAPI($sandbox, $keyPrivate);
 		$requestFactory = new RequestFactory($merchantId);
 		$paymentResponse = $requestFactory->createReceivePaymentRequest()->send($apiClient, $_POST);
 		if ($paymentResponse->getPaymentStatus() !== null

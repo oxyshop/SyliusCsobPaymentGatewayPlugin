@@ -6,4 +6,4 @@ mango-sylius:
         form:
             merchantId: Merchant ID
             sandbox: Sandbox
-            keyName: Key file name
+            privateKey: Private Key
