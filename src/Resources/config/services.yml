@@ -6,7 +6,6 @@ services:
 
     MangoSylius\CsobPaymentGatewayPlugin\Api\CsobApi:
         arguments:
-            $kernel: '@kernel'
             $translator: '@translator'
             $shopperContext: '@sylius.context.shopper'
 

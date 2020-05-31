@@ -19,7 +19,7 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 	/** @var CsobApiInterface */
 	protected $csobApi;
 
-	/** @var array */
+	/** @var array<mixed> */
 	private $api = [];
 
 	/**
@@ -49,21 +49,21 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 
 		$sandbox = (bool) $this->api['sandbox'];
 		$merchantId = (string) $this->api['merchantId'];
-		$keyName = (string) $this->api['keyName'];
+		$keyPrivate = (string) $this->api['keyPrivate'];
 
 		// Not new order
 		if ($model['orderId'] !== null && $model['externalPaymentId'] !== null) {
-			$status = $this->csobApi->retrieve($merchantId, $sandbox, $keyName);
+			$status = $this->csobApi->retrieve($merchantId, $sandbox, $keyPrivate);
 			$model['csobStatus'] = $status;
 
 			return;
 		}
 
 		// New order
-		/** @var TokenInterface */
+		/** @var TokenInterface $token */
 		$token = $request->getToken();
 		$order = $this->prepareOrder($token, $model);
-		$response = $this->csobApi->create($order, $merchantId, $sandbox, $keyName);
+		$response = $this->csobApi->create($order, $merchantId, $sandbox, $keyPrivate);
 
 		if ($response) {
 			$model['orderId'] = $response['orderId'];
@@ -89,7 +89,7 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 	/**
 	 * @param mixed $model
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	private function prepareOrder(TokenInterface $token, $model): array
 	{
@@ -108,7 +108,7 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 	/**
 	 * @param mixed $model
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	private function resolveProducts($model): array
 	{
@@ -120,5 +120,7 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 				],
 			];
 		}
+
+		return [];
 	}
 }

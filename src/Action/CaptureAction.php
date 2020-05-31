@@ -41,6 +41,9 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
 			$request->getModel() instanceof \ArrayAccess;
 	}
 
+	/**
+	 * @param ArrayObject<mixed> $model
+	 */
 	private function getCsobAction(TokenInterface $token, ArrayObject $model): SetCsob
 	{
 		$csobAction = new SetCsob($token);

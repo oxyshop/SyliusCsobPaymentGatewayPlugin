@@ -6,6 +6,7 @@ namespace MangoSylius\CsobPaymentGatewayPlugin\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -23,8 +24,8 @@ final class CsobGatewayConfigurationType extends AbstractType
 					]),
 				],
 			])
-			->add('keyName', TextType::class, [
-				'label' => 'mango-sylius.csob_plugin.form.keyName',
+			->add('keyPrivate', TextareaType::class, [
+				'label' => 'mango-sylius.csob_plugin.form.privateKey',
 				'constraints' => [
 					new NotBlank([
 						'groups' => ['sylius'],
