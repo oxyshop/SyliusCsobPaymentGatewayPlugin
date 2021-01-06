@@ -19,5 +19,5 @@ interface CsobApiInterface
 	 */
 	public function create(array $order, string $merchantId, bool $sandbox, string $keyPrivate): array;
 
-	public function retrieve(string $merchantId, bool $sandbox, string $keyPrivate): string;
+	public function retrieve(string $merchantId, bool $sandbox, string $keyPrivate, string $externalPaymentId): string;
 }
