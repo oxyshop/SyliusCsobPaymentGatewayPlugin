@@ -53,7 +53,7 @@ class CsobAction implements ApiAwareInterface, ActionInterface
 
 		// Not new order
 		if ($model['orderId'] !== null && $model['externalPaymentId'] !== null) {
-			$status = $this->csobApi->retrieve($merchantId, $sandbox, $keyPrivate);
+			$status = $this->csobApi->retrieve($merchantId, $sandbox, $keyPrivate, $model['externalPaymentId']);
 			$model['csobStatus'] = $status;
 
 			return;

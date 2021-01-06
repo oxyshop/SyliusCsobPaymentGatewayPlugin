@@ -8,6 +8,7 @@ use MangoSylius\CsobPaymentGatewayPlugin\Service\CryptoService;
 use SlevomatCsobGateway\Api\ApiClient;
 use SlevomatCsobGateway\Api\Driver\CurlDriver;
 use SlevomatCsobGateway\Api\HttpMethod;
+use SlevomatCsobGateway\Api\InvalidSignatureException;
 use SlevomatCsobGateway\Call\PaymentStatus;
 use SlevomatCsobGateway\Call\PayMethod;
 use SlevomatCsobGateway\Call\PayOperation;
@@ -95,14 +96,29 @@ class CsobApi implements CsobApiInterface
 		];
 	}
 
-	public function retrieve(string $merchantId, bool $sandbox, string $keyPrivate): string
+	public function retrieve(string $merchantId, bool $sandbox, string $keyPrivate, string $externalPaymentId): string
 	{
 		$apiClient = $this->createAPI($sandbox, $keyPrivate);
 		$requestFactory = new RequestFactory($merchantId);
-		$paymentResponse = $requestFactory->createReceivePaymentRequest()->send($apiClient, $_POST);
-		if ($paymentResponse->getPaymentStatus() !== null
-			&& $paymentResponse->getPaymentStatus()->equalsValue(PaymentStatus::S7_AWAITING_SETTLEMENT)) {
-			return CsobApiInterface::PAID;
+
+		try {
+			$paymentResponse = $requestFactory->createReceivePaymentRequest()->send($apiClient, $_POST);
+			if ($paymentResponse->getPaymentStatus() !== null
+				&& (
+					$paymentResponse->getPaymentStatus()->equalsValue(PaymentStatus::S7_AWAITING_SETTLEMENT)
+					|| $paymentResponse->getPaymentStatus()->equalsValue(PaymentStatus::S8_CHARGED)
+				)) {
+				return CsobApiInterface::PAID;
+			}
+		} catch (InvalidSignatureException $e) {
+			$status = $requestFactory->createPaymentStatus($externalPaymentId)->send($apiClient)->getPaymentStatus();
+			if ($status !== null
+				&& (
+					$status->equalsValue(PaymentStatus::S7_AWAITING_SETTLEMENT)
+					|| $status->equalsValue(PaymentStatus::S8_CHARGED
+				))) {
+				return CsobApiInterface::PAID;
+			}
 		}
 
 		return CsobApiInterface::CANCELED;
