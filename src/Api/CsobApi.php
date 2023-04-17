@@ -81,7 +81,6 @@ class CsobApi implements CsobApiInterface
 			HttpMethod::get(HttpMethod::POST),
 			$cart,
 			$order['description'],
-			null,
 			$clientId,
 			$language
 		)->send($apiClient);
